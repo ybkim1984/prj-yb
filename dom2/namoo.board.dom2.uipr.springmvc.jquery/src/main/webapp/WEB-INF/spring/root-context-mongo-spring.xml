@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	
+	<!-- Database properties 
+	<context:property-placeholder location="classpath:/database.properties" />
+	-->
+	
+	<!-- DataSource 
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="url" value="${database.url}" />
+		<property name="driverClassName" value="${database.driver}" />
+		<property name="username" value="${database.username}" />
+		<property name="password" value="${database.password}" />
+	</bean>-->
+	<!-- DataSource JNDI Lookup 
+	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/MySQLDS" />
+	-->
+	<!-- -->
+	<jdbc:embedded-database id="dataSource" type="H2">
+		<jdbc:script location="classpath:schema.ddl"/>
+	</jdbc:embedded-database>
+	 
+	<!-- transactionManager bean -->
+    <bean id="transactionManager"
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- annotation driven transaction setting -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    
+	<!-- Component Scan -->
+	<context:component-scan base-package="namoo.board" />
+	
+	<!-- Mongo 설정 -->
+	<mongo:mongo host="localhost" port="27017" />
+    <mongo:db-factory dbname="namoo_board_test" mongo-ref="mongo" />
+
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
+    </bean>
+    
+    <mongo:repositories base-package="namoo.board.dom2.da.mongospring.repository" />
+    
+    <!-- Implementation of Lifecycler for Spring DATA -->
+    <bean class="namoo.board.dom2.da.lifecycle.BoardStoreMongoSpringLifecycler" factory-method="getInstance" />
+	
+	
+</beans>

@@ -1,0 +1,153 @@
+@(socialBoards: List[namoo.board.dom2.entity.board.DCSocialBoard], postings: namoo.board.dom2.util.page.Page[namoo.board.dom2.entity.board.DCPosting], socialBoard: namoo.board.dom2.entity.board.DCSocialBoard)
+
+@layout.menu()
+@layout.common("Welcome to Play") {
+
+    <!-- Header ========================================================================================== -->
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="jumbotron">
+                        <h2>게시판</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><a href="${ctx}/posting">홈</a></li>
+                        <li><a href="${ctx}/posting">게시판</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Container ======================================================================================= -->
+    <div class="container">
+        <div class="row">
+
+            <div style="z-index : 1020" class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                <div class="list-group panel panel-success">
+                    <div class="panel-heading list-group-item text-center hidden-xs">
+                        <h4>게시판</h4>
+                    </div>
+                    <div>
+                    @if(socialBoards == null || socialBoards.isEmpty()) {
+                        <a class="list-group-item hidden-xs">개설된 게시판이 없습니다.</a>
+                    } else {
+                        @for(socialBoard <- socialBoards) {
+                            <a href='@routes.Postings.list(socialBoard.getUsid(), "1")' class="list-group-item hidden-xs">@socialBoard.getName()</a>
+                        }
+                    }
+                    </div>
+
+                </div>
+            </div>
+            @if(socialBoards == null || socialBoards.isEmpty()) {
+                <div class="col-sm-9 col-lg-9">
+                    <div>
+                        <h5>게시판 관리에서 게시판을 등록해주세요.</h5>
+                    </div>
+                </div>
+            }
+
+            <div class="col-sm-9 col-lg-9" id="listForm">
+                <div>
+                    <h3>@socialBoard.getName()</h3>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <colgroup>
+                            <col width="100"/>
+                            <col width="*"/>
+                            <col width="120"/>
+                            <col width="70"/>
+
+                            <col width="50"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th class="text-center">번호</th>
+                                <th class="text-center">제목</th>
+                                <th class="text-center">작성일</th>
+                                <th class="text-center">작성자</th>
+                                <th class="text-center">조회</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        @if(postings == null) {
+
+                            <tr>
+                                <th colspan="5" class="text-center">게시물이 존재하지 않습니다.</th>
+                            </tr>
+
+                        } else {
+                            @for(posting <- postings.getResults()) {
+
+                                <tr>
+                                    <td class="text-center">@posting.getUsid()</td>
+                                    <td><a href="/board/@socialBoard.getUsid/posting/@posting.getUsid">@posting.getTitle()</a>
+                                    </td>
+                                    <td class="text-center">
+                                        <fmt:formatDate value="@posting.getRegisterDate()" pattern="yyyy-MM-dd"/>
+                                    </td>
+                                    <td class="text-center">@posting.getWriterName()</td>
+                                    <td class="text-center">@posting.getReadCount()</td>
+                                </tr>
+                            }
+                        }
+
+                        </tbody>
+                    </table>
+                </div>
+                @if(postings != null) {
+                        <!-- Pagination -->
+                    <div class="text-center">
+                        <ul class="pagination">
+
+
+                            <li><a href="${ctx}/postings?boardUsid=${boardUsid}&page=1">«</a></li>
+                            @if(postings.getNavigateStartPage() < 1) {
+
+                                <li><a href="${ctx}/postings?boardUsid=${boardUsid}&page=${postings.getNavigateStartPage() -1}"></a></li>
+                            }
+
+                                <!--       <c:forEach var="i" begin="${postings.getNavigateStartPage()}"
+                               end="${postings.getNavigateStartPage() + postings.getNavigatePageCount() - 1}" step="1">
+                      <c:choose>     
+	                      <c:when test="${postings.getPage() eq i }">   
+	                      	<li class="active"><a href="${ctx}/postings?boardUsid=${boardUsid}&page=${i}">${i}</a></li>
+	                      </c:when>
+	                      <c:otherwise>
+	                     	 <li><a href="${ctx}/postings?boardUsid=${boardUsid}&page=${i}">${i}</a></li>
+	                      </c:otherwise>
+                      </c:choose> 	 -->
+                            @if(postings.getTotalPageCount() > 1) {
+                                @if(postings.getTotalPageCount() > postings.getNavigateStartPage() + postings.getNavigatePageCount()) {
+
+                                    <li><a href="${ctx}/postings?boardUsid=${boardUsid}&page=${postings.getNavigateStartPage() + postings.getNavigatePageCount()}">
+                                        ></a></li>
+                                }
+                                <li><a href="${ctx}/postings?boardUsid=${boardUsid}&page=${postings.getTotalPageCount()}">
+                                    »</a></li>
+                            }
+
+                        </ul>
+                    </div>
+                }
+                <div class="text-right">
+                    <a href="/board/@socialBoard.getUsid()/posting/create" class="btn btn btn-warning">등록</a>
+                </div>
+            </div>
+
+
+        </div>
+        @layout.footer()
+    </div>
+
+}

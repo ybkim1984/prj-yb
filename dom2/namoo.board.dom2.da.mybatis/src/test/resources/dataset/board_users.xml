@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  COPYRIGHT (c) Nextree Consulting 2015
+  This software is the proprietary of Nextree Consulting.  
+  
+  @author <a href="mailto:hkkang@nextree.co.kr">Kang Hyoungkoo</a>
+  @since 2015. 1. 5.
+ -->
+<dataset>
+    <board_user user_email="hkkang@nextree.co.kr"  user_name="강형구" phone_number="010-1234-5678" reg_date="2014-12-11 11:27:30" />
+    <board_user user_email="tsong@nextree.co.kr"   user_name="송태국" phone_number="010-1111-2222" reg_date="2014-12-12 16:23:00" />
+</dataset>

@@ -1,0 +1,29 @@
+<!--
+ * COPYRIGHT (c) Nextree Consulting 2015
+ * This software is the proprietary of Nextree Consulting.
+ *
+ * @author <a href="mailto:wckang@nextree.co.kr">Kang Woo Chang</a>
+ * @since 2015. 2. 9.
+-->
+<script>
+    $(document).ready(function(){
+        var userName = sessionStorage.getItem("loginUserName");
+        $("#loginUserName").text("로그아웃 [" + userName + "]");
+    });
+</script>
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="${ctx}/post">소셜보드</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li ><a href="/namooboard/post/main.html">홈</a></li>
+                <li ><a href="/namooboard/board/list.html">게시판 관리</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a id="loginUserName" href="#" onclick="logout()"></a></li>
+            </ul>
+        </div>
+    </div>
+</div>

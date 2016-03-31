@@ -1,0 +1,27 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET         /                                                                      controllers.Application.index()
+GET         /login                                                                 controllers.Application.loginForm()
+
+POST        /login                                                                 controllers.Application.login()
+GET         /logout                                                                controllers.Application.logout()
+GET         /boards                                                                controllers.Boards.list()
+POST        /board/create                                                          controllers.Boards.create()
+POST        /board/:usid                                                           controllers.Boards.update(usid: String)
+POST        /board/:usid/delete                                                    controllers.Boards.delete(usid: String)
+
+GET         /home                                                                  controllers.Postings.home()
+GET         /board/:boardUsid/postings                                             controllers.Postings.list(boardUsid:String, page:String)
+GET         /board/:boardUsid/posting/create                                       controllers.Postings.createView(boardUsid:String)
+POST        /board/:boardUsid/posting/create                                       controllers.Postings.create(boardUsid:String)
+GET         /board/:boardUsid/posting/:postingUsid                                 controllers.Postings.detail(boardUsid: String,postingUsid:String)
+GET         /board/:boardUsid/posting/:postingUsid/update                          controllers.Postings.updateView(boardUsid: String,postingUsid:String)
+POST        /board/:boardUsid/posting/:postingUsid                                 controllers.Postings.update(boardUsid: String,postingUsid:String)
+POST        /board/:boardUsid/posting/:postingUsid/delete                          controllers.Postings.delete(boardUsid:String, postingUsid:String)
+POST        /board/:boardUsid/posting/:postingUsid/comment                         controllers.Postings.commentCreate(boardUsid:String, postingUsid:String)
+POST        /board/:boardUsid/posting/:postingUsid/comment/:sequence/delete        controllers.Postings.commentDelete(boardUsid:String, postingUsid:String, sequence:Int)
+# Map static resources from the /public folder to the /assets URL path
+GET         /assets/*file                                                          controllers.Assets.at(path="/public", file)

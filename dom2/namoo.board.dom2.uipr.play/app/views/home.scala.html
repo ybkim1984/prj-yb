@@ -1,0 +1,92 @@
+@(socialBoards: List[namoo.board.dom2.entity.board.DCSocialBoard])
+<script type="text/javascript">
+function register ( ) {
+//document.getElementById('update').style.display="none";
+document.getElementById ( 'emptyList' ).style.display = "none" ;
+document.getElementById ( 'update' ).style.display = "none" ;
+document.getElementById ( 'create' ).style.display = "block" ;
+
+}
+function update ( name, usid ) {
+//document.getElementById('update').style.display="none";
+document.getElementById ( 'emptyList' ).style.display = "none" ;
+document.getElementById ( 'create' ).style.display = "none" ;
+document.getElementById ( 'update' ).style.display = "block" ;
+document.getElementById ( 'updateName' ).value = name ;
+document.getElementById ( 'updateUsid' ).value = usid ;
+}
+function updateSubmit ( ) {
+
+f = document.forms.modify ;
+f.action = "/board/" + document.getElementById ( 'updateUsid' ).value ;
+f.submit ( ) ;
+
+}
+
+function deleteSubmit ( ) {
+
+f = document.forms.modify ;
+f.action = "/board/" + document.getElementById ( 'updateUsid' ).value + "/delete" ;
+f.submit ( ) ;
+
+}
+</script>
+@layout.menu()
+@layout.common("Welcome to Play") {
+
+    <!-- Header ========================================================================================== -->
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="jumbotron">
+                        <h2>게시판</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><a href="${ctx}/posting">홈</a></li>
+                        <li><a href="${ctx}/posting">게시판</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Container ======================================================================================= -->
+    <div class="container">
+        <div class="row">
+
+            <div style="z-index : 1020" class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                <div class="list-group panel panel-success">
+                    <div class="panel-heading list-group-item text-center hidden-xs">
+                        <h4>게시판</h4>
+                    </div>
+                    <div>
+                    @if(socialBoards == null || socialBoards.isEmpty()) {
+                        <a class="list-group-item hidden-xs">개설된 게시판이 없습니다.</a>
+                    } else {
+                        @for(socialBoard <- socialBoards) {
+                            <a href='@routes.Postings.list(socialBoard.getUsid(), "1")' class="list-group-item hidden-xs">@socialBoard.getName()</a>
+                        }
+                    }
+                    </div>
+
+                </div>
+            </div>
+            @if(socialBoards == null || socialBoards.isEmpty()) {
+                <div class="col-sm-9 col-lg-9">
+                    <div>
+                        <h5>게시판 관리에서 게시판을 등록해주세요.</h5>
+                    </div>
+                </div>
+            }
+
+        </div>
+        @layout.footer()
+    </div>
+
+}

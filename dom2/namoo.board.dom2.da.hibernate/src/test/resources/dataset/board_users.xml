@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<TB_BOARD_USER email="hkkang@nextree.co.kr"  name="강형구" phone_number="010-1234-5678" reg_date="2014-12-11 11:27:30" />
+	<TB_BOARD_USER email="tsong@nextree.co.kr"   name="송태국" phone_number="010-1111-2222" reg_date="2014-12-12 16:23:00" />
+</dataset>

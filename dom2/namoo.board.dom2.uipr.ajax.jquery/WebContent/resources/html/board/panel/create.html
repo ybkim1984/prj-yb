@@ -1,0 +1,119 @@
+﻿<!-- 
+ * COPYRIGHT (c) Nextree Consulting 2015
+ * This software is the proprietary of Nextree Consulting.  
+ * 
+ * @author <a href="mailto:wckang@nextree.co.kr">Kang Woo Chang</a>
+ * @since 2015. 2. 10.
+-->
+
+<script>
+
+
+    var brdc = brdc || {
+        //
+        panel_init : function() {
+            brdc.findBoardTeam();
+            brdc.drawMenuNavigation();
+
+            $("#btn_create").click(brdc.createBoard);
+        },
+
+        drawMenuNavigation : function () {
+            //
+            $("#menu_navi li:gt(0)").remove();
+            $("#menu_navi").append('<li><a href="#">게시판 개설</a></li>');
+        },
+
+        findBoardTeam : function() {
+            var url = "/namooboard/sp/user/boardTeam";
+            var data = {};
+            var callback = function(result) {
+                if(! result) return;
+
+                brdc.makeTeamSelection(result);
+            }
+
+            sendRequest(url, data, callback);
+        },
+
+        makeTeamSelection : function(teamList) {
+            var optionHtml = "";
+            $.each(teamList, function(idx, item) {
+                optionHtml += '<option value="' + item.usid + '">';
+                optionHtml += item.name;
+                optionHtml += '</option>';
+            });
+
+            $("#teamUsid").html(optionHtml);
+        },
+
+        createBoard : function() {
+            if(! validation()) return;
+
+            var url = "/namooboard/sp/board";
+            var data = {
+                boardName : $("#boardName").val(),
+                teamUsid : $("#teamUsid").val(),
+                commentable : $("#commentable").is(":checked")
+            };
+            var callback = function() {
+                openInfoLayerPop("저장 되었습니다.", function(){
+                    location.href = "/namooboard/board/list.html";
+                });
+            };
+
+            sendRequest(url, data, callback, "POST");
+        }
+    };
+
+    $(document).ready(function(){
+        PANEL_OBJ.panel_data = brdc;
+    });
+</script>
+
+<div>
+    <h3>게시판 개설</h3>
+</div>
+
+<div class="table-responsive">
+    <div class="well">
+        <form class="bs-example form-horizontal" action="${ctx}/board/create" method="post">
+            <fieldset>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">게시판명</label>
+
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control" id="boardName" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">팀선택</label>
+
+                    <div class="col-lg-10">
+                        <select id="teamUsid" class="form-control" required>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">설정</label>
+
+                    <div class="col-lg-10">
+                        <div class="checkbox">
+                            <label><input type="checkbox" id="commentable"> 댓글사용</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                        <a id="btn_create" class="btn btn-default">확인</a>
+                        <a class="btn btn-primary" href="/namooboard/board/list.html">취소</a>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+
+</div>

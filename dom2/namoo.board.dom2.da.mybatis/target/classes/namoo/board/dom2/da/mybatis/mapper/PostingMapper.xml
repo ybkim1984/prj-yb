@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  COPYRIGHT (c) Nextree Consulting 2015
+  This software is the proprietary of Nextree Consulting.  
+  
+  @author <a href="mailto:hkkang@nextree.co.kr">Kang Hyoungkoo</a>
+  @since 2015. 1. 5.
+ -->
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="namoo.board.dom2.da.mybatis.mapper.PostingMapper">
+    
+    <!-- =======================================================================
+        posting
+     -->
+    
+    <insert id="insert" parameterType="Posting">
+        INSERT INTO posting (posting_id, board_id, title, writer_email, read_count, reg_date, commentable_yn, anonymous_comment_yn)
+        VALUES (
+            #{usid}, #{boardUsid}, #{title}, #{writerEmail}, #{readCount}, #{registerDate}, 
+            #{option.commentable,typeHandler=BoolYnTypeHandler},
+            #{option.anonymousComment,typeHandler=BoolYnTypeHandler}
+        )
+    </insert>
+    
+    <update id="update" parameterType="Posting">
+        UPDATE posting
+        SET
+            <if test="title != null">title = #{title},</if>
+            commentable_yn = #{option.commentable,typeHandler=BoolYnTypeHandler},
+            anonymous_comment_yn = #{option.anonymousComment,typeHandler=BoolYnTypeHandler}
+        WHERE posting_id = #{usid}
+    </update>
+    
+    <update id="updateReadCount" parameterType="string" >
+        UPDATE posting
+        SET read_count = (SELECT read_count + 1
+                          FROM posting
+                          WHERE posting_id = #{usid})
+        WHERE posting_id = #{usid}
+    </update>
+    
+    <delete id="delete" parameterType="string">
+        DELETE FROM posting
+        WHERE posting_id = #{usid}
+    </delete>
+    
+    <delete id="deleteByBoard" parameterType="string">
+        DELETE FROM posting
+        WHERE board_id = #{boardUsid}
+    </delete>
+    
+    <insert id="insertSequence" parameterType="string">
+        INSERT INTO board_seq (seq_name, next_seq)
+        VALUES (#{seqName}, 1)
+    </insert>
+    
+    <update id="nextSequence" parameterType="map" >
+        <selectKey keyProperty="nextSeq" order="BEFORE" resultType="int">
+            SELECT next_seq
+            FROM board_seq
+            WHERE seq_name = #{seqName}
+        </selectKey>
+        UPDATE board_seq
+        SET next_seq = (#{nextSeq} + 1)
+        WHERE seq_name = #{seqName} 
+    </update>
+    
+    <select id="selectSequence" parameterType="string" resultType="int">
+        SELECT next_seq
+        FROM board_seq
+        WHERE seq_name = #{seqName}
+    </select>
+    
+    
+    <resultMap type="PageCriteria" id="pageCriteriaResultMap" >
+        <result property="page" column="page"/>
+        <result property="itemLimitOfPage" column="item_limit_of_page"/>
+        <result property="totalItemCount" column="total_item_count"/>
+        
+    </resultMap>
+    
+    <select id="selectPageCriteria" parameterType="map" resultMap="pageCriteriaResultMap" >
+        SELECT
+            #{pageCriteria.page} AS page,
+            #{pageCriteria.itemLimitOfPage} AS item_limit_of_page,
+            COUNT(posting_id) AS total_item_count
+        FROM posting
+        WHERE board_id = #{boardUsid}
+    </select>
+    
+    <sql id="postingColumns">
+        posting.posting_id, posting.title, posting.read_count, posting.board_id, posting.reg_date,
+        posting.writer_email, user.user_name,
+        posting.commentable_yn, posting.anonymous_comment_yn
+    </sql>
+    
+    <resultMap type="Posting" id="postingResultMap">
+        <id     property="usid"             column="posting_id" />
+        <result property="title"            column="title" />
+        <result property="writerEmail"      column="writer_email" />
+        <result property="writerName"       column="user_name" />
+        <result property="readCount"        column="read_count" />
+        <result property="boardUsid"        column="board_id" />
+        <result property="registerDate"     column="reg_date" />
+        
+        <association property="option" javaType="PostingOption">
+            <result property="commentable"          column="commentable_yn"         typeHandler="BoolYnTypeHandler"/>
+            <result property="anonymousComment"     column="anonymous_comment_yn"   typeHandler="BoolYnTypeHandler"/>
+        </association>
+    </resultMap>
+    
+    <select id="select" parameterType="string" resultMap="postingResultMap">
+        SELECT <include refid="postingColumns"/>
+        FROM posting
+        JOIN board_user user ON posting.writer_email = user.user_email
+        WHERE posting_id = #{usid}
+    </select>
+    
+    <select id="selectPage" parameterType="map" resultMap="postingResultMap">
+        SELECT <include refid="postingColumns" />
+        FROM posting
+        JOIN board_user user ON posting.writer_email = user.user_email
+        WHERE board_id = #{boardUsid}
+        ORDER BY posting.reg_date DESC
+        LIMIT #{pageCriteria.start}, #{pageCriteria.itemLimitOfPage}
+    </select>
+    
+    
+    <select id="selectUsidByBoard" parameterType="string" resultType="string" >
+        SELECT posting_id
+        FROM posting
+        WHERE board_id = #{boardUsid}
+    </select>
+    
+    <!-- =======================================================================
+        posting contents
+     -->
+    
+    <update id="updateContents" parameterType="PostingContents">
+        UPDATE posting
+        SET contents = #{contents}
+        WHERE posting_id = #{postingUsid}
+    </update>
+
+    <sql id="contentsColumns">
+        posting.posting_id, posting.contents,
+        comment.comment_id, comment.sequence, comment.comment, comment.writer_email, comment.written_time 
+    </sql>
+    
+    <resultMap type="PostingContents" id="contentsResultMap">
+        <id property="postingUsid" column="posting_id"/>
+        <result property="contents" column="contents"/>
+        
+        <collection property="commentBag.comments" javaType="list" ofType="PostingComment" notNullColumn="comment_id">
+            <result property="postingUsid"  column="posting_id"/>
+            <result property="sequence"     column="sequence"/>
+            <result property="comment"      column="comment"/>
+            <result property="writerEmail"  column="writer_email"/>
+            <result property="writtenTime"  column="written_time" />            
+        </collection>
+    </resultMap>
+    
+    <select id="selectContents" parameterType="string" resultMap="contentsResultMap">
+        SELECT <include refid="contentsColumns"/>             
+        FROM posting
+        LEFT JOIN posting_comment comment ON posting.posting_id = comment.posting_id
+        WHERE posting.posting_id = #{postingUsid}
+    </select>
+    
+    <!-- =======================================================================
+        comment
+     -->
+    
+    <update id="nextCommentSequence" parameterType="map" >
+        <selectKey keyProperty="nextSeq" order="BEFORE" resultType="int">
+            SELECT next_seq
+            FROM board_seq
+            WHERE seq_name = 'comment_id'
+        </selectKey>
+        UPDATE board_seq
+        SET next_seq = (#{nextSeq} + 1)
+        WHERE seq_name = 'comment_id' 
+    </update>
+    
+    <insert id="insertComment" parameterType="map">
+        INSERT INTO posting_comment (posting_id, sequence, comment, writer_email, written_time)
+        VALUES (#{postingUsid}, #{comment.sequence}, #{comment.comment}, #{comment.writerEmail}, #{comment.writtenTime})
+    </insert>
+    
+    <delete id="deleteComment" parameterType="map">
+        DELETE FROM posting_comment
+        WHERE posting_id = #{postingUsid} AND sequence = #{sequence}
+    </delete>
+    
+    <delete id="deleteCommentInPosting" parameterType="string">
+        DELETE FROM posting_comment
+        WHERE posting_id = #{postingUsid}
+    </delete>
+    
+    <delete id="deleteCommentByUsids" parameterType="list">
+        DELETE FROM posting_comment
+        WHERE posting_id IN 
+            <foreach item="postingUsid" collection="list" open="(" separator="," close=")">
+                #{postingUsid}
+            </foreach>
+    </delete>
+
+    
+    <sql id="commentColumns">
+        comment.comment_id, comment.posting_id, comment.sequence, comment.comment, written_time,
+        comment.writer_email, user.user_name
+    </sql>
+    
+    <resultMap type="PostingComment" id="commentResultMap">
+        <id     property="postingUsid"  column="posting_id"/>
+        <id     property="sequence"     column="sequence"/>
+        <result property="comment"      column="comment"/>
+        <result property="writerEmail"  column="writer_email"/>
+        <result property="writtenTime"  column="written_time"/>
+    </resultMap>
+    
+    <select id="selectComment" parameterType="map" resultMap="commentResultMap">
+        SELECT <include refid="commentColumns"/>
+        FROM posting_comment comment
+        JOIN board_user user ON comment.writer_email = user.user_email
+        WHERE posting_id = #{postingUsid} AND sequence = #{sequence} 
+    </select>
+    
+</mapper>

@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://proxy.ws.pr.dom2.board.namoo/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="BoardUserWs" targetNamespace="http://proxy.ws.pr.dom2.board.namoo/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://proxy.ws.pr.dom2.board.namoo/" elementFormDefault="unqualified" targetNamespace="http://proxy.ws.pr.dom2.board.namoo/" version="1.0">
+
+  <xs:element name="findAllUsers" type="tns:findAllUsers"/>
+
+  <xs:element name="findAllUsersResponse" type="tns:findAllUsersResponse"/>
+
+  <xs:element name="findUserWithEmail" type="tns:findUserWithEmail"/>
+
+  <xs:element name="findUserWithEmailResponse" type="tns:findUserWithEmailResponse"/>
+
+  <xs:element name="registerUser" type="tns:registerUser"/>
+
+  <xs:element name="registerUserResponse" type="tns:registerUserResponse"/>
+
+  <xs:element name="removeUserWithEmail" type="tns:removeUserWithEmail"/>
+
+  <xs:element name="removeUserWithEmailResponse" type="tns:removeUserWithEmailResponse"/>
+
+  <xs:complexType name="registerUser">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="boardUserJson" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="registerUserResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="findUserWithEmail">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="userEmail" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="findUserWithEmailResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:dcBoardUser"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="dcBoardUser">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="USER_PASSWORD" type="xs:string"/>
+      <xs:element minOccurs="0" name="email" type="xs:string"/>
+      <xs:element minOccurs="0" name="name" type="xs:string"/>
+      <xs:element minOccurs="0" name="oid" type="xs:string"/>
+      <xs:element minOccurs="0" name="phoneNumber" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="removeUserWithEmail">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="userEmail" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="removeUserWithEmailResponse">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="findAllUsers">
+    <xs:sequence/>
+  </xs:complexType>
+
+  <xs:complexType name="findAllUsersResponse">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="return" type="tns:dcBoardUser"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="findAllUsersResponse">
+    <wsdl:part element="tns:findAllUsersResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findUserWithEmail">
+    <wsdl:part element="tns:findUserWithEmail" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="registerUserResponse">
+    <wsdl:part element="tns:registerUserResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findAllUsers">
+    <wsdl:part element="tns:findAllUsers" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeUserWithEmailResponse">
+    <wsdl:part element="tns:removeUserWithEmailResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findUserWithEmailResponse">
+    <wsdl:part element="tns:findUserWithEmailResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeUserWithEmail">
+    <wsdl:part element="tns:removeUserWithEmail" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="registerUser">
+    <wsdl:part element="tns:registerUser" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="BoardUserWs">
+    <wsdl:operation name="registerUser">
+      <wsdl:input message="tns:registerUser" name="registerUser">
+    </wsdl:input>
+      <wsdl:output message="tns:registerUserResponse" name="registerUserResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findUserWithEmail">
+      <wsdl:input message="tns:findUserWithEmail" name="findUserWithEmail">
+    </wsdl:input>
+      <wsdl:output message="tns:findUserWithEmailResponse" name="findUserWithEmailResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeUserWithEmail">
+      <wsdl:input message="tns:removeUserWithEmail" name="removeUserWithEmail">
+    </wsdl:input>
+      <wsdl:output message="tns:removeUserWithEmailResponse" name="removeUserWithEmailResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findAllUsers">
+      <wsdl:input message="tns:findAllUsers" name="findAllUsers">
+    </wsdl:input>
+      <wsdl:output message="tns:findAllUsersResponse" name="findAllUsersResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BoardUserWsSoapBinding" type="tns:BoardUserWs">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="registerUser">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="registerUser">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="registerUserResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findUserWithEmail">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findUserWithEmail">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findUserWithEmailResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeUserWithEmail">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removeUserWithEmail">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeUserWithEmailResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findAllUsers">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findAllUsers">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findAllUsersResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BoardUserWs">
+    <wsdl:port binding="tns:BoardUserWsSoapBinding" name="BoardUserWsLogicPort">
+      <soap:address location="http://localhost:8080/ws/BoardUserWs"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

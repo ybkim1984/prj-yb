@@ -1,0 +1,139 @@
+﻿<!-- 
+ * COPYRIGHT (c) Nextree Consulting 2015
+ * This software is the proprietary of Nextree Consulting.  
+ * 
+ * @author <a href="mailto:wckang@nextree.co.kr">Kang Woo Chang</a>
+ * @since 2015. 2. 11.
+-->
+<!-- Container ======================================================================================= -->
+<script>
+
+    var pstl = pstl || {
+        panel_init : function() {
+            //
+            pstl.findPostList(PANEL_OBJ.req_param.page);
+
+            getBoardInfo(PANEL_OBJ.req_param.usid, function(result){
+                $("#h_boardName").text(result.name);
+                pstl.drawMenuNavigation(result.name);
+            })
+            $("#btn_showCreatePostView").click(pstl.showCreatePostView);
+        },
+
+        findPostList : function(nextPage) {
+            //
+            var id = PANEL_OBJ.req_param.usid;
+            var url = "/namooboard/sp/post/page/" + id;
+            var data = {
+                page : nextPage || 1,
+                totalPageCount : 0,
+                totalItemCount : 0,
+                itemLimitOfPage : 10,
+                navigateLimit : 10
+            };
+            var callback = function(result) {
+                if(result && ! result.emptyResult) {
+                    var postListHtml = '';
+                    $.each(result.results, function (idx, item) {
+                        postListHtml += '<tr>';
+                        postListHtml += '<td class="text-center">' + item.usid + '</td>';
+                        postListHtml += '<td><a href="javascript:;" onclick="pstl.showPost(\'' + item.usid + '\')">' + item.title + '</a>';
+                        postListHtml += '</td>';
+                        postListHtml += '<td class="text-center">';
+                        postListHtml += getFormattedDate(item.registerDate);
+                        postListHtml += '</td>';
+                        postListHtml += '<td class="text-center"> ' + item.writerName + '</td>';
+                        postListHtml += '<td class="text-center">' + item.readCount + '</td>';
+                        postListHtml += '</tr>';
+                    });
+
+                    $("#tbody_post_list").empty().append(postListHtml);
+                    PANEL_OBJ.req_param.page = result.page;
+                }
+
+                drawPagination(result.criteria);
+            };
+
+            sendRequest(url, JSON.stringify(data), callback, "POST");
+        },
+
+        showCreatePostView : function() {
+            //
+            var data = {
+                usid : PANEL_OBJ.req_param.usid
+            };
+            loadPanel("div_board_content", "/namooboard/post/panel/create.html", data);
+        },
+
+        showPost : function(usid) {
+            //
+            var url = "/namooboard/sp/post/count/" + usid;
+            var data = {};
+            var callback = function(){
+                var panel_data = {
+                    usid : usid,
+                    page : PANEL_OBJ.req_param.page || 1
+                }
+                loadPanel("div_board_content", "/namooboard/post/panel/detail.html", panel_data);
+            };
+
+            sendRequest(url, data, callback, "PUT");
+        },
+
+        drawMenuNavigation : function(boardName) {
+            //
+            $("#menu_navi li:gt(1)").remove();
+
+            var navi_li = '<li><a href="#">' + boardName + '</a></li>';
+
+            $("#menu_navi").append(navi_li);
+        }
+    };
+
+    $(document).ready(function(){
+        PANEL_OBJ.panel_data = pstl;
+    });
+</script>
+
+<div>
+    <h3 id="h_boardName"></h3>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover">
+        <colgroup>
+            <col width="100"/>
+            <col width="*"/>
+            <col width="120"/>
+            <col width="70"/>
+
+            <col width="50"/>
+        </colgroup>
+        <thead>
+        <tr>
+            <th class="text-center">번호</th>
+            <th class="text-center">제목</th>
+            <th class="text-center">작성일</th>
+            <th class="text-center">작성자</th>
+            <th class="text-center">조회</th>
+        </tr>
+        </thead>
+        <tbody id="tbody_post_list">
+            <tr id="empty_post">
+                <th colspan="5" class="text-center">게시물이 존재하지 않습니다.</th>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="text-center">
+    <ul class="pagination">
+    </ul>
+</div>
+
+<div class="text-right">
+    <a id="btn_showCreatePostView" href="javascript:;">
+        <button type="button" class="btn btn btn-warning">등록</button>
+    </a>
+</div>

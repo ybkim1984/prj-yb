@@ -1,0 +1,108 @@
+﻿<!--
+ * COPYRIGHT (c) Nextree Consulting 2015
+ * This software is the proprietary of Nextree Consulting.
+ *
+ * @author <a href="mailto:wckang@nextree.co.kr">Kang Woo Chang</a>
+ * @since 2015. 2. 12.
+-->
+<script>
+
+    var brdu = brdu || {
+        panel_init : function() {
+            //
+            var usid = PANEL_OBJ.req_param.usid;
+            getBoardInfo(usid, function(result){
+                $("#inp_boardName").val(result.name);
+            })
+
+            $("#btn_update").click(function(){
+                brdu.updateBoard(usid);
+            });
+
+            $("#btn_delete").click(function(){
+                brdu.deleteBoard(usid);
+            });
+
+            brdu.drawMenuNavigation();
+        },
+
+        drawMenuNavigation : function () {
+            //
+            $("#menu_navi li:gt(0)").remove();
+            $("#menu_navi").append('<li><a href="#">게시판 수정</a></li>');
+        },
+
+        updateBoard : function(id) {
+            if(! validation()) return;
+
+            openConfirmLayerPop("수정 하시겠습니까?", function() {
+                var url = "/namooboard/sp/board/" + id;
+                var nameValues = [];
+                nameValues.push({
+                    name: "name",
+                    value: $("#inp_boardName").val()
+                });
+                var data = {
+                    nameValues: nameValues
+                };
+                var callback = function (result) {
+                    openInfoLayerPop("수정 되었습니다.", function(){
+                        location.href = "/namooboard/board/list.html";
+                    });
+                };
+
+                sendRequest(url, JSON.stringify(data), callback, "PUT");
+            });
+        },
+
+        deleteBoard : function(id) {
+            openConfirmLayerPop("삭제 하시겠습니까?", function(){
+                var url = "/namooboard/sp/board/" + id;
+                var data = {};
+                var callback = function() {
+                    openInfoLayerPop("삭제 되었습니다.", function(){
+                        location.href = "/namooboard/board/list.html";
+                    });
+                };
+
+                sendRequest(url, JSON.stringify(data), callback, "DELETE");
+            });
+        }
+    };
+
+    $(document).ready(function(){
+        PANEL_OBJ.panel_data = brdu;
+    });
+
+</script>
+
+<div>
+    <h3>게시판 수정</h3>
+</div>
+
+<div class="table-responsive">
+    <div class="well">
+        <form class="form-horizontal">
+            <fieldset>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">게시판명</label>
+
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control" id="inp_boardName" required>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                        <a id="btn_update" href="javascript:;" class="btn btn-primary">확인</a>
+                        <a href="/namooboard/board/list.html" class="btn btn-default">취소</a>
+                        <a id="btn_delete" href="javascript:;" class="btn btn-danger">삭제</a>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+
+</div>

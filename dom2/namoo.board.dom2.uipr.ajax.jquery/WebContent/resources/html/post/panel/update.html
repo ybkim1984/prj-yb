@@ -1,0 +1,105 @@
+﻿<!-- 
+ * COPYRIGHT (c) Nextree Consulting 2015
+ * This software is the proprietary of Nextree Consulting.  
+ * 
+ * @author <a href="mailto:wckang@nextree.co.kr">Kang Woo Chang</a>
+ * @since 2015. 2. 9.
+-->
+<script>
+
+    var pstu = pstu || {
+
+        panel_init : function() {
+            //
+            pstu.findPost();
+            $("#btn_modifyPost").click(pstu.modifyPost);
+            $("#btn_cancelPostModify").click(pstu.cancelPostModify);
+        },
+
+        findPost : function() {
+            //
+            var url = "/namooboard/sp/post/contents/" + PANEL_OBJ.req_param.usid;
+            var data = {};
+            var callback = function(result) {
+            	pstu.setViewData(result);
+            };
+
+            sendRequest(url, data, callback);
+        },
+
+        setViewData : function(postData) {
+            //
+            getBoardInfo(PANEL_OBJ.req_param.boardUsid, function(result){
+                $("#h_boardTitle").text(result.name);
+            });
+            $("#div_postTitle").text(postData.title);
+            $("#writerName").text(sessionStorage.getItem("loginUserName"));
+            $("#span_registerDate").text(getFormattedDate(postData.registerDate));
+            $("#contents").val(postData.contents.contents);
+
+        },
+
+        modifyPost : function() {
+            //
+            var url = "/namooboard/sp/post";
+            var data = {
+                postingUsid : PANEL_OBJ.req_param.usid,
+                contents : $("#contents").val()
+            };
+            var callback = function(){
+               openInfoLayerPop("수정 되었습니다.", function(){
+                    var panel_data = {
+                        usid : PANEL_OBJ.req_param.usid
+                    };
+                    loadPanel("div_board_content", "/namooboard/post/panel/detail.html", panel_data);
+                });
+            };
+
+            sendRequest(url, data, callback, "PUT");
+        },
+
+        cancelPostModify : function() {
+            //
+            var panel_data = {
+                usid : PANEL_OBJ.req_param.usid
+            };
+            loadPanel("div_board_content", "/namooboard/post/panel/detail.html", panel_data);
+        }
+    };
+
+    $(document).ready(function(){
+        //
+        PANEL_OBJ.panel_data = pstu;
+    });
+</script>
+
+<div>
+    <h3 id="h_boardTitle"></h3>
+</div>
+
+<form>
+    <input type="hidden" id="boardUsid">
+    <input type="hidden" id="postingUsid">
+
+    <div class="panel panel-default">
+        <div class="panel-heading" id="div_postTitle">
+        </div>
+        <div class="panel-body">
+            <div class="post">
+                <div class="write_info">
+                    <span class="name" id="writerName"></span>
+                    <span class="date"><span class="_val" id="span_registerDate"></span></span>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" id="contents" rows="5"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <a id="btn_modifyPost" href="javascript:;" class="btn btn-primary">저장</a>
+        <a id="btn_cancelPostModify" href="javascript:;" class="btn btn-default">취소</a>
+    </div>
+</form>

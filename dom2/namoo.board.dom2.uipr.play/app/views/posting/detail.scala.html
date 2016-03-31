@@ -1,0 +1,178 @@
+@(socialBoards: List[namoo.board.dom2.entity.board.DCSocialBoard], posting: namoo.board.dom2.entity.board.DCPosting, socialBoard: namoo.board.dom2.entity.board.DCSocialBoard)
+<script type="text/javascript">
+function deleteButton ( boardUsid, postingUsid ) {
+
+$.ajax ( {
+type : 'POST',
+url : '/board/' + boardUsid + '/posting/' + postingUsid + '/delete',
+success : function ( result ) {
+alert ( "삭제되었습니다" ) ;
+location.href = "/board/" + boardUsid + "/postings?page=1" ;
+}
+} ) ;
+
+}
+
+function deleteCommentButton ( boardUsid, postingUsid, sequence ) {
+
+$.ajax ( {
+type : 'POST',
+url : '/board/' + boardUsid + '/posting/' + postingUsid + '/comment/' + sequence + '/delete',
+success : function ( result ) {
+location.href = "/board/" + boardUsid + "/posting/" + postingUsid ;
+}
+} ) ;
+
+}
+</script>
+@layout.menu()
+@layout.common("Welcome to Play") {
+    <!-- Header ========================================================================================== -->
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="jumbotron">
+                        <h2>게시판</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><a href="/home">홈</a></li>
+                        <li><a href="/home">게시판</a></li>
+                        <li><a href="/board/@socialBoard.getUsid()/postings?page=1" class="active">@socialBoard.getName</a>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Container ======================================================================================= -->
+
+
+    <div class="container">
+        <div class="row">
+
+            <div style="z-index : 1020" class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                <div class="list-group panel panel-success">
+                    <div class="panel-heading list-group-item text-center hidden-xs">
+                        <h4>게시판 관리</h4>
+                    </div>
+                    <div>
+                    @if(socialBoards == null || socialBoards.isEmpty()) {
+                        <a class="list-group-item hidden-xs">개설된 게시판이 없습니다.</a>
+                    } else {
+                        @for(socialBoard <- socialBoards) {
+                            <a href='@routes.Postings.list(socialBoard.getUsid(), "1")' class="list-group-item hidden-xs">@socialBoard.getName()</a>
+                        }
+                    }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-9 col-lg-9">
+                <div>
+                    <h3>@socialBoard.getName()</h3>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                    @posting.getTitle()
+                    </div>
+                    <div class="panel-body">
+                        <div class="post">
+
+                            <strong>@posting.getWriterName()</strong>
+                                &nbsp;<span class="text-muted">    <fmt:formatDate value="@posting.getRegisterDate()" pattern="yyyy-MM-dd"/></span>
+                                &nbsp;<span class="text-muted">@posting.getReadCount() 읽음</span>
+
+
+                            @if(socialBoard.isCommentable) {
+                                @if(posting.getOption.isCommentable) {
+                                    @if(posting.getContents.getCommentBag == null) {
+                                        <span class="glyphicon glyphicon-comment" style="padding : 10 px"> 0</span>
+                                    } else {
+                                        <span class="glyphicon glyphicon-comment" style="padding : 10 px"> @posting.getContents.getCommentBag.getComments.size()</span>
+
+                                    }
+                                }
+                            }
+                            <a href="/board/@socialBoard.getUsid/posting/@posting.getUsid/update"
+                            class="glyphicon glyphicon-cog pull-right" style="padding : 10 px">수정</a>
+
+                            <a href="javascript:deleteButton('@socialBoard.getUsid','@posting.getUsid')"
+                            class="glyphicon glyphicon-trash pull-right" style="padding : 10 px">삭제</a>
+
+                        </div>
+                        <br>
+
+                        <p style="padding : 20 px">
+                        @posting.getContents.getContents
+                        </p>
+                        @if(socialBoard.isCommentable) {
+                            @if(posting.getOption.isCommentable) {
+
+                                <table class="table" style="font-size : 13 px ; padding : 20 px">
+                                @if(posting.getContents.getCommentBag != null) {
+                                    @for(comment <- posting.getContents.getCommentBag.getComments) {
+
+                                        <tr>
+                                            <td>
+                                            @if(!posting.getOption.isAnonymousComment) {
+                                                <strong>@comment.getWriterEmail</strong>
+                                            }
+
+                                            </td>
+                                            <td class="text-right">
+
+                                                <fmt:formatDate value="@comment.getWrittenTime()" pattern="yyyy-MM-dd"/>
+                                                <a class="glyphicon glyphicon-trash"
+                                                href="javascript:deleteCommentButton('@socialBoard.getUsid','@posting.getUsid','@comment.getSequence')"
+                                                ></a>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <p class="txt">@comment.getComment</p>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                </table>
+                            }
+                        }
+
+                    </div>
+                    @if(socialBoard.isCommentable) {
+                        @if(posting.getOption.isCommentable) {
+                            <div class="panel-footer">
+                                <div class="write_area">
+                                    <form action="/board/@socialBoard.getUsid/posting/@posting.getUsid/comment"
+                                    method="post" role="form">
+                                        <div>
+                                            <input type="hidden" name="email" value='@session.get("email")'>
+                                            <textarea class="input_write_comment" name="comment" placeholder="댓글 쓰기"></textarea>
+                                            <input type="submit" class="comment_submit" value="전송">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="text-center">
+                    <a href="${ctx}/postings?boardUsid=${boardUsid}&page=1">
+                        <button type="button" class="btn btn-default">목록</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        @layout.footer()
+    </div>
+}

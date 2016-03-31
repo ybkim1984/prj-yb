@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 
+ * COPYRIGHT (c) Nextree Consulting 2014
+ * This software is the proprietary of Nextree Consulting.  
+ * 
+ * @author <a href="mailto:eschoi@nextree.co.kr">Choi, Eunsun</a>
+ * @since 2015. 01. 16.
+-->
+<dataset>
+    <board_team team_id="001" team_name="컨설팅팀" admin_email="tsong@nextree.co.kr" reg_date="2015-1-5 11:27:30" />
+    <board_seq seq_name="team_id" next_seq="2" />
+    
+    <board_user user_email="tsong@nextree.co.kr"   user_name="송태국" phone_number="010-1111-2222" reg_date="2015-1-6 16:23:00" />
+    <board_user user_email="hkkang@nextree.co.kr"  user_name="강형구" phone_number="010-1234-5678" reg_date="2015-1-6 16:23:30" />
+    <board_user user_email="syhan@nextree.co.kr"   user_name="한성영" phone_number="010-0000-0000" reg_date="2015-1-6 16:23:40" />
+    <board_user user_email="eschoi@nextree.co.kr"   user_name="최은선" phone_number="010-2222-2222" reg_date="2015-1-6 16:24:00" />
+    
+    <board_member member_id="001-hkkang@nextree.co.kr" team_id="001" member_email="hkkang@nextree.co.kr"  reg_date="2015-1-7 16:27:30" /> 
+    <board_member member_id="001-syhan@nextree.co.kr" team_id="001" member_email="syhan@nextree.co.kr"  reg_date="2015-1-7 16:27:30" /> 
+</dataset>

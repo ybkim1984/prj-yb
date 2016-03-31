@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ * COPYRIGHT (c) Nextree Consulting 2014
+ * This software is the proprietary of Nextree Consulting.  
+ * 
+ * @author <a href="mailto:eschoi@nextree.co.kr">Choi, Eunsun</a>
+ * @since 2015. 01. 16.
+-->
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+   
+<mapper namespace="namoo.board.dom2.da.mybatis.mapper.BoardTeamMapper">
+    
+    <!-- =======================================================================
+        board team
+     -->
+     
+    <insert id="insert" parameterType="BoardTeam">
+        INSERT INTO board_team (team_id, team_name, admin_email, reg_date)
+        VALUES (#{usid}, #{name}, #{admin.email}, SYSDATE())
+    </insert>
+    
+    <delete id="delete" parameterType="string">
+        DELETE FROM board_team
+        WHERE team_id = #{usid}
+    </delete>
+    
+    <update id="nextSequence" parameterType="map" >
+        <selectKey keyProperty="nextSeq" order="BEFORE" resultType="int">
+            SELECT next_seq
+            FROM board_seq
+            WHERE seq_name = 'team_id'
+        </selectKey>
+        UPDATE board_seq
+        SET next_seq = (#{nextSeq} + 1)
+        WHERE seq_name = 'team_id' 
+    </update>
+    
+    <sql id="teamColumns">
+        team.team_id, team.team_name,
+        team.admin_email, user.user_name, user.phone_number
+    </sql>
+    
+    <resultMap type="BoardTeam" id="teamResultMap">
+        <id     property="usid"             column="team_id"/>
+        <result property="name"             column="team_name"/>
+        
+        <association property="admin" javaType="BoardUser">
+            <id     property="email"        column="admin_email"/>
+            <result property="name"         column="user_name"/>
+            <result property="phoneNumber"  column="phone_number"/>
+        </association>
+    </resultMap>
+    
+    <select id="select" parameterType="string" resultMap="teamResultMap">
+        SELECT <include refid="teamColumns"/>
+        FROM board_team team
+        JOIN board_user user ON team.admin_email = user.user_email
+        WHERE team.team_id = #{usid}
+    </select>
+    
+    <select id="selectByName" parameterType="string" resultMap="teamResultMap">
+        SELECT <include refid="teamColumns"/>
+        FROM board_team team
+        JOIN board_user user ON team.admin_email = user.user_email
+        WHERE team.team_name = #{name}
+    </select>
+    
+    <select id="selectAll" resultMap="teamResultMap">
+        SELECT <include refid="teamColumns"/>
+        FROM board_team team
+        JOIN board_user user ON team.admin_email = user.user_email
+    </select>
+
+    
+    <!-- =======================================================================
+        board member
+     -->
+
+    <insert id="insertMember" parameterType="map">
+        INSERT INTO board_member (member_id, team_id, member_email, reg_date)
+        VALUES (#{member.usid}, #{teamUsid}, #{member.user.email}, SYSDATE())
+    </insert>
+    
+    <delete id="deleteMember" parameterType="map">
+        DELETE FROM board_member
+        WHERE team_id = #{teamUsid} AND member_email = #{memberEmail}
+    </delete>
+    
+    <delete id="deleteMembersByBoard" parameterType="string">
+        DELETE FROM board_member
+        WHERE team_id = #{teamUsid}
+    </delete>
+    
+    <sql id="memberColumns">
+        member.member_id,
+        team.team_name,
+        member.member_email, user.user_name, user.phone_number
+    </sql>
+    
+    <resultMap type="BoardMember" id="memberResultMap">
+        <id     property="usid"     column="member_id"/>
+        <result property="teamName" column="team_name"/>
+        <association property="user" javaType="BoardUser">
+            <id     property="email"        column="member_email"/>
+            <result property="name"         column="user_name"/>
+            <result property="phoneNumber"  column="phone_number"/>
+        </association>
+    </resultMap>
+    
+    <select id="selectMember" parameterType="map" resultMap="memberResultMap">
+        SELECT <include refid="memberColumns"/>
+        FROM board_member member
+        JOIN board_team team ON member.team_id = team.team_id
+        JOIN board_user user ON member.member_email = user.user_email
+        WHERE member.team_id = #{teamUsid} AND member.member_email = #{memberEmail}
+    </select>
+    
+    <select id="selectMembers" parameterType="string" resultMap="memberResultMap">
+        SELECT <include refid="memberColumns"/>
+        FROM board_member member
+        JOIN board_team team ON member.team_id = team.team_id
+        JOIN board_user user ON member.member_email = user.user_email
+        WHERE member.team_id = #{teamUsid}
+    </select>
+    
+</mapper>

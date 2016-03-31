@@ -1,0 +1,5 @@
+namoo\board\dom2\da\jdbc\BoardUserJdbcStore.class
+namoo\board\dom2\da\jdbc\BoardTeamJdbcStore.class
+namoo\board\dom2\da\jdbc\PostingJdbcStore.class
+namoo\board\dom2\da\lifecycle\BoardStoreJdbcLifecycler.class
+namoo\board\dom2\da\jdbc\SocialBoardJdbcStore.class

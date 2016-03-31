@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * COPYRIGHT (c) Nextree Consulting 2014
+ * This software is the proprietary of Nextree Consulting.  
+ * 
+ * @author <a href="mailto:eschoi@nextree.co.kr">Choi, Eunsun</a>
+ * @since 2015. 01. 16.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+    <context:component-scan base-package="namoo.board.dom2.da.mybatis" />
+
+    <!-- DataSource -->
+    <jdbc:embedded-database id="dataSource" type="H2">
+        <jdbc:script location="/schema-test.ddl" />
+    </jdbc:embedded-database>
+
+    <!-- transactionManager bean -->
+    <bean id="transactionManager"
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- annotation driven transaction setting -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <!-- sqlSessionFactory bean -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation"
+            value="classpath:namoo/board/dom2/da/mybatis/mybatis-config-test.xml" />
+    </bean>
+
+    <!-- mapper scan bean -->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="namoo.board.dom2.da.mybatis.mapper" />
+    </bean>
+
+</beans>

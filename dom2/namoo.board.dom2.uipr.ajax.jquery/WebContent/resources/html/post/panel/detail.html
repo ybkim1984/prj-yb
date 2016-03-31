@@ -1,0 +1,229 @@
+﻿<!-- 
+ * COPYRIGHT (c) Nextree Consulting 2015
+ * This software is the proprietary of Nextree Consulting.  
+ * 
+ * @author <a href="mailto:wckang@nextree.co.kr">Kang Woo Chang</a>
+ * @since 2015. 2. 11.
+-->
+
+<script>
+
+    var pstr = pstr || {
+        panel_init : function () {
+            //
+            $("#btn_modify").click(pstr.modifyPost);
+            $("#btn_delete").click(pstr.deletePost);
+            $("#btn_attachComment").click(pstr.attachComment);
+
+            pstr.findPost();
+        },
+
+        findPost : function () {
+            //
+            var url = "/namooboard/sp/post/contents/" + PANEL_OBJ.req_param.usid;
+            var data = {};
+            var callback = function (postResult) {
+                PANEL_OBJ.req_param.boardUsid = postResult.boardUsid;
+                getBoardInfo(postResult.boardUsid, function(boardResult){
+                    $("#h_boardName").text(boardResult.name);
+                    PANEL_OBJ.req_param.boardName = boardResult.name;
+                    pstr.setViewData(postResult, boardResult);
+                });
+            };
+
+            sendRequest(url, data, callback);
+        },
+
+        setViewData : function (postData, boardData) {
+            //
+            $("#div_postTitle").text(postData.title);
+            $("#st_writerName").text(postData.writerName);
+            $("#span_regDate").text(" " + getFormattedDate(postData.registerDate));
+            $("#span_readCnt").text(postData.readCount + " 읽음");
+            $("#commentContent").val(null);
+
+            if (boardData.commentable && postData.option.commentable) {
+                if (postData) {
+                    $("#span_commentable").show();
+                    $("#span_commentable").text(" " + postData.contents.commentBag.comments.length || 0);
+                }
+                $("#div_comment").show();
+            }
+            else {
+                $("#tb_comment").remove();
+            }
+
+            if (postData.contents) {
+                $("#p_postContent").text(postData.contents.contents);
+                pstr.drawComment(postData.contents.commentBag.comments, postData.option.anonymousComment);
+            }
+
+            $("#btn_list").unbind("click").click(function () {
+                pstr.gotoList(postData.boardUsid);
+            });
+
+            pstr.drawMenuNavigation(postData, boardData);
+        },
+
+        drawMenuNavigation : function (postData, boardData) {
+            //
+            $("#menu_navi li:gt(1)").remove();
+
+            var navi_li = '<li><a href="javascript:;">' + PANEL_OBJ.req_param.boardName + '</a></li>';
+            var $navi_li = $(navi_li).click(function () {
+                pstr.gotoList(postData.boardUsid);
+            });
+
+            $("#menu_navi").append($navi_li);
+            $("#menu_navi").append('<li><a href="#">' + postData.title + '</a></li>');
+        },
+
+        drawComment : function (commentList, isAnonymousComment) {
+            //
+            var commentHtml = "";
+            $.each(commentList, function(idx, item) {
+                commentHtml += '<tr>';
+                commentHtml += '    <td>';
+                if (!isAnonymousComment) {
+                    commentHtml += item.writerEmail;
+                }
+                commentHtml += '    </td>';
+                commentHtml += '    <td class="text-right">' + getFormattedDate(item.writtenTime);
+                commentHtml += '        <a class="glyphicon glyphicon-trash" href="javascript:;" onclick="pstr.deleteComment(' + item.sequence + ')"></a>';
+                commentHtml += '    </td>';
+                commentHtml += '</tr>';
+                commentHtml += '<tr>';
+                commentHtml += '    <td colspan="2">';
+                commentHtml += '        <p class="txt">' + item.comment + '</p>';
+                commentHtml += '    </td>';
+                commentHtml += '</tr>';
+            });
+
+            $("#tbody_comment").html(commentHtml);
+        },
+
+        attachComment : function () {
+            //
+            var usid = PANEL_OBJ.req_param.usid;
+            var comment = $("#commentContent").val();
+            if (! comment) {
+                alert("댓글을 작성해주세요.");
+                $("#commentContent").focus();
+                return;
+            }
+
+            var url = "/namooboard/sp/post/comment/" + usid;
+            var data = {
+                comment : comment,
+                email : sessionStorage.getItem("loginUserEmail")
+            };
+            var callback = function () {
+                openInfoLayerPop("댓글이 등록되었습니다.", function(){
+                    pstr.findPost();
+                });
+            };
+
+            sendRequest(url, JSON.stringify(data), callback, "POST");
+        },
+
+        modifyPost : function () {
+            //
+            var data = {
+                usid : PANEL_OBJ.req_param.usid,
+                boardUsid : PANEL_OBJ.req_param.boardUsid
+            };
+            loadPanel("div_board_content", "/namooboard/post/panel/update.html", data);
+        },
+
+        deletePost : function () {
+            //
+            openConfirmLayerPop("삭제 하시겠습니까?", function(){
+                var url = "/namooboard/sp/post/" + PANEL_OBJ.req_param.usid;
+                var data = {};
+                var callback = function () {
+                    openInfoLayerPop("삭제 되었습니다.", function() {
+                        var data = {
+                            usid: PANEL_OBJ.req_param.boardUsid
+                        };
+                        loadPanel("div_board_content", "/namooboard/post/panel/list.html", data);
+                    });
+                };
+
+                sendRequest(url, data, callback, "DELETE");
+            });
+        },
+
+        deleteComment : function (commentSeq) {
+            //
+            openConfirmLayerPop("댓글을 삭제 하시겠습니까?", function(){
+                var url = "/namooboard/sp/post/comment/" + PANEL_OBJ.req_param.usid + "/" + commentSeq;
+                var data = {};
+                var callback = function () {
+                    pstr.findPost();
+                };
+
+                sendRequest(url, data, callback, "DELETE");
+            });
+        },
+
+        gotoList : function (usid) {
+            var data = {
+                usid : usid,
+                page : PANEL_OBJ.req_param.page
+            };
+            loadPanel("div_board_content", "/namooboard/post/panel/list.html", data);
+        }
+    }
+
+    $(document).ready(function(){
+        //
+        PANEL_OBJ.panel_data = pstr;
+    });
+</script>
+
+<div>
+    <h3 id="h_boardName"></h3>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading" id="div_postTitle">
+    </div>
+    <div class="panel-body">
+        <div class="post">
+
+             <strong id="st_writerName"></strong>
+             &nbsp;<span class="text-muted" id="span_regDate"></span>
+             &nbsp;<span class="text-muted" id="span_readCnt"></span>
+
+             <span id="span_commentable" class="glyphicon glyphicon-comment" style="padding:10px; display: none;"></span>
+             <a id="btn_modify" href="javascript:;" class="glyphicon glyphicon-cog pull-right" style="padding:10px">수정</a>
+             <a id="btn_delete" href="javascript:;" class="glyphicon glyphicon-trash pull-right" style="padding:10px">삭제</a>
+
+        </div>
+        <br>
+
+        <p id="p_postContent" style="padding:20px">
+        </p>
+
+        <table id="tb_comment" class="table" style="font-size: 13px; padding :20px">
+            <tbody id="tbody_comment">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="panel-footer" id="div_comment" style="display: none;">
+        <div class="write_area">
+            <div>
+                <textarea class="input_write_comment" id="commentContent" placeholder="댓글 쓰기"></textarea>
+                <a id="btn_attachComment" class="comment_submit" href="javascript:;">전송</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="text-center">
+    <a id="btn_list" href="#">
+        <button type="button" class="btn btn-default">목록</button>
+    </a>
+</div>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <tb_board_user email="tsong@nextree.co.kr"   name="송태국" phone_number="010-1111-2222" reg_date="2015-1-6 16:23:00" />
+    <tb_board_user email="hkkang@nextree.co.kr"  name="강형구" phone_number="010-1234-5678" reg_date="2015-1-6 16:23:30" />
+    <tb_board_user email="syhan@nextree.co.kr"   name="한성영" phone_number="010-0000-0000" reg_date="2015-1-6 16:23:40" />
+    <tb_board_user email="eschoi@nextree.co.kr"  name="최은선" phone_number="010-2222-2222" reg_date="2015-1-6 16:24:00" />
+    <tb_board_user email="demonpark@nextree.co.kr"  name="박석재" phone_number="010-3333-3333" reg_date="2015-1-6 16:24:00" />
+    
+	<tb_board_team id="001" name="컨설팅팀" admin_email="tsong@nextree.co.kr" reg_date="2015-1-5 11:27:30" />
+    <tb_board_team id="002" name="경영지원팀" admin_email="demonpark@nextree.co.kr" reg_date="2015-1-5 11:27:30" />
+    <tb_board_seq seq_name="team_id" next_seq="3" /> 
+    <tb_board_seq seq_name="board_id" next_seq="4" />
+    
+    <tb_board_member id="001-hkkang@nextree.co.kr" team_id="001" user_email="hkkang@nextree.co.kr"  reg_date="2015-1-7 16:27:30" /> 
+    <tb_board_member id="001-syhan@nextree.co.kr" team_id="001" user_email="syhan@nextree.co.kr"  reg_date="2015-1-7 16:27:30" /> 
+
+	<tb_board_member id="002-eschoi@nextree.co.kr" team_id="002" user_email="eschoi@nextree.co.kr"  reg_date="2015-1-7 16:27:30" /> 
+    <tb_board_member id="002-demonpark@nextree.co.kr" team_id="002" user_email="demonpark@nextree.co.kr"  reg_date="2015-1-7 16:27:30" />
+    <tb_board_member id="002-syhan@nextree.co.kr" team_id="002" user_email="syhan@nextree.co.kr"  reg_date="2015-1-7 16:27:30" />
+</dataset>

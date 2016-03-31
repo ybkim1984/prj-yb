@@ -1,0 +1,117 @@
+@(socialBoards: List[namoo.board.dom2.entity.board.DCSocialBoard], socialBoard: namoo.board.dom2.entity.board.DCSocialBoard)
+
+@layout.menu()
+@layout.common("Welcome to Play") {
+
+    <!-- Header ========================================================================================== -->
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="jumbotron">
+                        <h2>게시판</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><a href="/home">홈</a></li>
+                        <li><a href="/home">게시판</a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Container ======================================================================================= -->
+    <div class="container">
+        <div class="row">
+
+            <div style="z-index : 1020" class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                <div class="list-group panel panel-success">
+                    <div class="panel-heading list-group-item text-center hidden-xs">
+                        <h4>게시판</h4>
+                    </div>
+                    <div>
+                    @if(socialBoards == null || socialBoards.isEmpty()) {
+                        <a class="list-group-item hidden-xs">개설된 게시판이 없습니다.</a>
+                    } else {
+                        @for(socialBoard <- socialBoards) {
+                            <a href='@routes.Postings.list(socialBoard.getUsid(), "1")' class="list-group-item hidden-xs">@socialBoard.getName()</a>
+                        }
+                    }
+                    </div>
+
+                </div>
+            </div>
+            @if(socialBoards == null || socialBoards.isEmpty()) {
+                <div class="col-sm-9 col-lg-9">
+                    <div>
+                        <h5>게시판 관리에서 게시판을 등록해주세요.</h5>
+                    </div>
+                </div>
+            }
+            <div class="col-sm-9 col-lg-9" >
+                <div>
+                    <h3>게시글 등록</h3>
+                </div>
+
+                <div class="table-responsive">
+                    <div class="well">
+                        <form class="bs-example form-horizontal" action="/board/@socialBoard.getUsid()/posting/create" method="post">
+                            <fieldset>
+                                <input type="hidden" name="writerEmail" value='@session.get("email")'>
+                                <input type="hidden" name="boardUsid" value="@socialBoard.getUsid()">
+
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">제목</label>
+
+                                    <div class="col-lg-10">
+                                        <input type="text" name="title" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">내용</label>
+
+                                    <div class="col-lg-10">
+                                        <textarea class="form-control" name="contents" rows="3" id="textArea"></textarea>
+                                    </div>
+                                </div>
+                                @if(socialBoard.isCommentable()) {
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label">댓글</label>
+
+                                        <div class="col-lg-10">
+
+                                            <div class="checkbox">
+                                                <label><input type="checkbox" name="commentable">사용안함</label>
+                                            </div>
+
+                                            <div class="checkbox">
+                                                <label><input type="checkbox" name="anonymousComment">무기명</label>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                }
+                                <div class="form-group">
+                                    <div class="col-lg-10 col-lg-offset-2">
+                                        <button type="submit" class="btn btn-primary">확인</button>
+                                        <button class="btn btn-default">취소</button>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        @layout.footer()
+    </div>
+
+}

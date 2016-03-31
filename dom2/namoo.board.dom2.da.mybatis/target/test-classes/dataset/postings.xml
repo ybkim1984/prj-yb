@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  COPYRIGHT (c) Nextree Consulting 2015
+  This software is the proprietary of Nextree Consulting.  
+  
+  @author <a href="mailto:hkkang@nextree.co.kr">Kang Hyoungkoo</a>
+  @since 2015. 1. 5.
+ -->
+<dataset> 
+    <board_team team_id="001" team_name="컨설팅팀" admin_email="tsong@nextree.co.kr" reg_date="2015-1-5 11:27:30" />
+    <board_seq seq_name="team_id" next_seq="2" />
+    
+    <board_user user_email="tsong@nextree.co.kr"   user_name="송태국" phone_number="010-1111-2222" reg_date="2015-1-6 16:23:00" />
+    <board_user user_email="hkkang@nextree.co.kr"  user_name="강형구" phone_number="010-1234-5678" reg_date="2015-1-6 16:23:30" />
+    <board_user user_email="syhan@nextree.co.kr"   user_name="한성영" phone_number="010-0000-0000" reg_date="2015-1-6 16:23:40" />
+    <board_user user_email="eschoi@nextree.co.kr"   user_name="최은선" phone_number="010-2222-2222" reg_date="2015-1-6 16:24:00" />
+    
+    <board_member member_id="001-hkkang@nextree.co.kr" team_id="001" member_email="hkkang@nextree.co.kr"  reg_date="2015-1-7 16:27:30" /> 
+    <board_member member_id="001-syhan@nextree.co.kr" team_id="001" member_email="syhan@nextree.co.kr"  reg_date="2015-1-7 16:27:30" />
+
+    <social_board board_id="001" board_name="일정게시판" commentable_yn="Y" team_id="001" create_date="2014-12-11 11:00:00" />
+    <board_seq seq_name="board_id" next_seq="2" />
+    
+    <posting posting_id="001-0001" board_id="001" title="금주 회식 공지" writer_email="hkkang@nextree.co.kr" 
+            read_count="0" reg_date="2015-1-8 16:27:30" commentable_yn="Y" anonymous_comment_yn="N"
+            contents="팀 회식이 금주 금요일 7시에 있습니다. 장소는 추후 공지하도록 하겠습니다. 많은 참석 바랍니다." />
+    
+    <posting posting_id="001-0002" board_id="001" title="1월 휴가계획 일을 체크합니다." writer_email="hkkang@nextree.co.kr" 
+            read_count="0" reg_date="2015-1-8 16:27:30" commentable_yn="Y" anonymous_comment_yn="Y"
+            contents="1월 휴가일정을 체크하려 합니다. 개인 별 휴가계획 일자를 담당자에게 메일로 알려주시기 바랍니다." />
+    <board_seq seq_name="001-posting_id" next_seq="3" />
+    
+    
+    <posting_comment comment_id="1" posting_id="001-0001" sequence="1" writer_email="syhan@nextree.co.kr" written_time="2015-1-8 16:30:00"
+            comment="네 알겠습니다." /> 
+    <posting_comment comment_id="2" posting_id="001-0001" sequence="2" writer_email="eschoi@nextree.co.kr" written_time="2015-1-8 16:40:00"
+            comment="참석하도록 하겠습니다." />
+    <board_seq seq_name="001-0001-comment" next_seq="3" />
+    
+</dataset>
