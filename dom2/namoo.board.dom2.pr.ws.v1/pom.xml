@@ -32,6 +32,7 @@
 									<wsdl>${basedir}/src/main/resources/wsdl/BoardUserWs.wsdl</wsdl>
 								</wsdlOption>
 							</wsdlOptions>
+							<encoding>UTF-8</encoding>
 						</configuration>
 						<goals>
 							<goal>wsdl2java</goal>
