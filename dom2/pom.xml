@@ -38,7 +38,6 @@
     	<module>namoo.board.dom2.pr.jersey</module>
     	<module>namoo.board.dom2.pr.socket</module>
     	<module>namoo.board.dom2.pr.ws</module>
-    	<module>namoo.board.dom2.pr.ws.v1</module>
     	<module>namoo.board.dom2.sp.jersey</module>
     	<module>namoo.board.dom2.sp.socket</module>
     	<module>namoo.board.dom2.sp.ws</module>
