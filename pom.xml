@@ -2,40 +2,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>namoo.board</groupId>
-    <artifactId>namoo.board.dom2</artifactId>
+    <artifactId>namoo.board.build</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-	<!-- add test -->
-    <dependencies>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.2.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.0</version>
-        </dependency>
-
-        <!-- POI library -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>3.11</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>3.11</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml-schemas</artifactId>
-            <version>3.11</version>
-        </dependency>
-    </dependencies>
-
+    <packaging>pom</packaging>
+	
     <build>
         <plugins>
             <plugin>
@@ -49,4 +19,9 @@
             </plugin>
         </plugins>
     </build>
+    
+    <modules>
+    	<module>dom2/namoo.board.dom2</module>
+    	<module>dom2/namoo.board.dom2.cp.pojo</module>
+    </modules>
 </project>
