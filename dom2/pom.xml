@@ -19,9 +19,4 @@
             </plugin>
         </plugins>
     </build>
-    
-    <modules>
-    	<module>namoo.board.dom2</module>
-    	<module>namoo.board.dom2.cp.pojo</module>
-    </modules>
 </project>
